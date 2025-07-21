@@ -5,7 +5,7 @@ A simple, real-time internet download speed monitor with a graphical interface.
 ---
 [ There are two versions, one is Tkinter version the other one is PyQt version(which shows upload speed also) ]
 
-[ To run the file just donwload any of the two files mentioned above and run it on your pc ]
+[ To run the file just download any of the two files mentioned above and run it on your pc ]
 
 ## What is this?
 
