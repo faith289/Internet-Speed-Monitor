@@ -16,7 +16,7 @@ Tkinter UI
 
 
 
-PyQt6 UI
+screenshots/pyqt_screenshot.png
 
 
 
