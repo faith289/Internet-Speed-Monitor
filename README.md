@@ -10,13 +10,17 @@ Both versions stream from Cloudflare’s public speed endpoint and show:
 - Total data downloaded
 - Start/Stop controls and live status
 
+
 ## Screenshots
 
 Tkinter UI
 
+![Tkinter screenshot](screenshots/tkinter_screenshot.jpg)
 
+PyQt6 UI
 
-screenshots/pyqt_screenshot.png
+![PyQt6 screenshot](screenshots/pyqt_screenshot.jpg)
+
 
 
 
