@@ -22,8 +22,6 @@ PyQt6 UI
 ![PyQt6 screenshot](screenshots/pyqt_screenshot.png)
 
 
-
-
 ## How it works
 
 The app streams a 200 MB payload from Cloudflare’s speed test endpoint and measures throughput over short intervals:
