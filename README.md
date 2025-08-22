@@ -15,11 +15,11 @@ Both versions stream from Cloudflare’s public speed endpoint and show:
 
 Tkinter UI
 
-![Tkinter screenshot](screenshots/tkinter_screenshot.jpg)
+![Tkinter screenshot](screenshots/tkinter_screenshot.png)
 
 PyQt6 UI
 
-![PyQt6 screenshot](screenshots/pyqt_screenshot.jpg)
+![PyQt6 screenshot](screenshots/pyqt_screenshot.png)
 
 
 
