@@ -1,104 +1,158 @@
-# Internet Speed Monitor
+# Live Speed Monitor
 
-A real-time internet download speed monitor with a graphical interface, available in both **Tkinter** and **PyQt6** versions. Instantly see your download speed, total data transferred, and status updates in a modern, user-friendly window.
+A lightweight desktop app to monitor real‑time internet download speed by continuously streaming a test file and updating estimates roughly every 500 ms. Two GUI implementations are included:
 
----
+- PyQt6 (animated, modern UI)
+- Tkinter (minimal, cross‑platform)
 
-## Features
-
-| Feature                | Tkinter Version (`active_speed_monitor.py`) | PyQt6 Version (`active_speed_monitor_pyqt.py`) |
-|------------------------|:------------------------------------------:|:----------------------------------------------:|
-| Download Speed         | ✅                                          | ✅                                              |
-| Upload Speed           | ❌                                          | ❌                                              |
-| Real-Time Updates      | ✅ (every 0.5s)                             | ✅ (every 0.5s)                                 |
-| Total Data Counter     | ✅                                          | ✅                                              |
-| Start/Stop Controls    | ✅                                          | ✅                                              |
-| Threaded/Async         | ✅ (threaded)                               | ✅ (QThread)                                    |
-| Modern UI/Animations   | ❌                                          | ✅ (glow, fade, icons)                          |
-| Status Display         | ✅                                          | ✅                                              |
-| Error Handling         | ✅                                          | ✅                                              |
-| Cross-Platform         | ✅                                          | ✅                                              |
-
----
+Both versions stream from Cloudflare’s public speed endpoint and show:
+- Current download rate in Mbps and MBps
+- Total data downloaded
+- Start/Stop controls and live status
 
 ## Screenshots
 
-**PyQt6 Version:**
+Tkinter UI
 
-![PyQt6 Version](./pyqt_screenshot.png)
 
-*Screenshot updated to reflect the latest UI changes.*
 
-**Tkinter Version:**
+PyQt6 UI
 
-![Tkinter Version](./tkinter_screenshot.png)
 
----
 
-## How It Works
+## How it works
 
-- **Download Test:** Both versions download a 200 MB test file from Cloudflare in chunks, measuring speed in real time.
-- **Live GUI:** See your current speed (Mbps/MBps), total MB transferred, and status (Idle, Downloading, Completed, Stopped, Error).
-- **Start/Stop:** Begin or halt the test at any time. The UI remains responsive throughout.
+The app streams a 200 MB payload from Cloudflare’s speed test endpoint and measures throughput over short intervals:
 
----
+- Test URL: https://speed.cloudflare.com/__down?bytes=200000000
+- Mbps = (bits_downloaded_since_start / elapsed_seconds) / 1,000,000
+- MBps = Mbps / 8
+
+Notes:
+- Shorter measurement windows make the UI more responsive but less smooth.
+- Throughput varies with ISP shaping, local congestion, and route to the test host.
+
+## Features
+
+- Real‑time speed updates every ~0.5s
+- Continuous streaming for stable rolling estimates
+- Total downloaded counter
+- Start/Stop without restarting the app
+- PyQt6 build:
+  - Rounded card with glow animation on the download icon
+  - Smooth window fade‑in/out
+  - Background worker thread with signal/slot updates and graceful shutdown
+- Tkinter build:
+  - Simple, portable UI
+  - Background thread for non‑blocking updates
 
 ## Requirements
 
-- **Python 3.x**
-- **requests** library (`pip install requests`)
-- **PyQt6** (`pip install PyQt6`) — *for the PyQt version only*
+- Python 3.9+
+- requests
 
----
+For PyQt6 build:
+- PyQt6
 
-## Usage
+Tkinter is included with most Python installations.
 
-### Tkinter Version
+## Installation
 
-1. **Install dependencies:**
-   ```bash
-   pip install requests
-   ```
-2. **Run:**
-   ```bash
-   python active_speed_monitor.py
-   ```
-3. Click **Start** to begin the download speed test. Click **Stop** to halt and reset.
+```bash
+# Clone
+git clone .git
+cd 
 
----
+# Create & activate a virtual environment (recommended)
+python -m venv .venv
+# Windows
+.venv\Scripts\activate
+# macOS/Linux
+source .venv/bin/activate
 
-### PyQt6 Version
+# Install dependencies
+pip install -r requirements.txt
+```
 
-1. **Install dependencies:**
-   ```bash
-   pip install requests PyQt6
-   ```
-2. **Run:**
-   ```bash
-   python active_speed_monitor_pyqt.py
-   ```
-3. Click **Start** to begin the download speed test. Click **Stop** to halt and reset.
+Example requirements.txt:
+```
+requests
+PyQt6 ; extra == "pyqt"
+```
 
----
+Or install directly:
+```
+pip install requests PyQt6
+```
 
-## File Overview
+## Run
 
-- `active_speed_monitor.py` — Tkinter-based, download speed only, simple UI.
-- `active_speed_monitor_pyqt.py` — PyQt6-based, download speed only, modern UI with animations.
-- `Speed Monitor PyQt.exe` / `Speed Monitor Tkinter.exe` — Pre-built executables (if provided).
-- `net works.txt` — Development notes.
-- `active_speed_monitor.spec` — PyInstaller spec for building executables.
+Tkinter app:
+```bash
+python active_speed_monitor.py
+```
 
----
+PyQt6 app:
+```bash
+python active_speed_monitor_pyqt.py
+```
 
-## Limitations
+## Project structure
 
-- **Data Usage:** Each test downloads up to 200 MB per file (and continues for as long as you let it run).
-- **Speed Variability:** Results depend on your ISP, network, and server conditions.
-- **No Upload Test:** This app only measures download speed.
+- active_speed_monitor.py — Tkinter implementation
+- active_speed_monitor_pyqt.py — PyQt6 implementation with animations and QThread worker
+- screenshots/
+  - tkinter_screenshot.jpg
+  - pyqt_screenshot.jpg
+- README.md
 
----
+## Architecture notes
 
-## Author
+PyQt6:
+- DownloadWorker (QThread)
+  - Streams with requests, computes Mbps every ~500 ms
+  - Emits progress(mbps, mbps_byte, downloaded_mb), error(str), finished()
+  - Graceful stop via running flag and wait()
+- RealTimeSpeedMonitorPyQt (QWidget)
+  - Starts/stops worker, updates labels via signals
+  - Glow animation via QGraphicsDropShadowEffect
+  - Window fade via QPropertyAnimation
 
-Created by FAiTH 
+Tkinter:
+- Background Thread streams and updates labels using thread‑safe widget config calls.
+- Simple start/stop state handling and cumulative byte counter.
+
+## Customization
+
+- Change test size: edit TEST_URL bytes parameter.
+- Adjust update cadence: tweak the 0.5‑second check in the worker loop.
+- Tune chunk size:
+  - Tkinter: CHUNK_SIZE
+  - PyQt6: CHUNK_SIZE_DOWNLOAD
+
+## Troubleshooting
+
+- “Network error” or no updates
+  - Verify internet connection and firewall permissions.
+  - Some networks may block or throttle the test endpoint.
+- UI freezes
+  - Ensure only one worker is running. The PyQt6 version guards and waits on stop.
+- Speed lower than browser tests
+  - Browser tools often use multiple connections and longer averaging windows.
+
+## Safety and data usage
+
+- This tool downloads data continuously; avoid on metered connections.
+- No uploads or personal data collection.
+- For indicative measurements only; not a certified speed test.
+
+## Contributing
+
+Issues and PRs are welcome. For bug reports, include:
+- OS and Python version
+- Steps to reproduce
+- Console output and screenshots if relevant
+
+## License
+
+MIT License. See LICENSE for details.
