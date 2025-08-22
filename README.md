@@ -50,21 +50,7 @@ Notes:
   - Simple, portable UI
   - Background thread for non‑blocking updates
 
-PyQt6 vs Tkinter implementations
-Aspect	PyQt6 app (active_speed_monitor_pyqt.py)	Tkinter app (active_speed_monitor.py)
-UI toolkit	PyQt6 (Qt 6)	Tkinter (standard library)
-Look & feel	Modern card layout with rounded borders, icon, glow; dark theme friendly	Simple, native-looking widgets; light theme by default
-Animations	Window fade-in/out via QPropertyAnimation; pulsing glow using QGraphicsDropShadowEffect	None
-Concurrency model	QThread worker (DownloadWorker) emits Qt signals: progress(mbps, MBps, downloaded_mb), error(str), finished()	Python Thread running stream_download_speed; updates labels directly
-Responsiveness & safety	Thread-safe UI updates via Qt’s signal/slot mechanism; explicit stop() + wait() for graceful shutdown	Lightweight; direct widget updates from background thread (works in practice but not strictly thread-safe in Tkinter)
-Update cadence	Emits updates when values change, sampled every ~0.5s	Updates labels every ~0.5s in loop
-Chunk size	35 MB chunks (CHUNK_SIZE_DOWNLOAD = 3510241024) for high-throughput links	256 KB chunks (CHUNK_SIZE = 256*1024); smoother on low bandwidth/latency
-Status handling	Status label with color states; Start disables until worker finishes; Stop enabled while running	Simple status text; Start/Stop buttons independent
-Visual indicator	Download icon with animated glow while active	Text-only indicators
-Window behavior	Fixed 600x230 window, min/max set; fade-out on close with clean app quit	500x270 window; standard close behavior
-Dependencies	Requires PyQt6 + requests	Only requests (tkinter bundled with Python)
-Footprint	Heavier dependency size; richer UI	Minimal footprint; fastest to run anywhere
-Best for	Users wanting a polished, animated desktop feel and robust threading	Users wanting the simplest, most portable script with minimal dependencies
+
 
 ## Requirements
 
