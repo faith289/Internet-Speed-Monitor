@@ -283,3 +283,5 @@ if __name__ == "__main__":
     win = RealTimeSpeedMonitorPyQt()
     win.show()
     sys.exit(app.exec()) 
+
+# App Created by FAiTH
